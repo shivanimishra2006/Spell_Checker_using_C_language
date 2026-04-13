@@ -7,13 +7,11 @@
 #define MAX 50
 #define MAX_SUG 200
 
-// Trie Node
 typedef struct Trie {
     struct Trie* child[SIZE];
     int end;
 } Trie;
 
-// Suggestion struct
 typedef struct {
     char word[MAX];
     int dist;
@@ -22,7 +20,6 @@ typedef struct {
 Suggestion suggestions[MAX_SUG];
 int sugCount = 0;
 
-// Create node
 Trie* createNode() {
     Trie* node = (Trie*)malloc(sizeof(Trie));
     node->end = 0;
@@ -31,7 +28,6 @@ Trie* createNode() {
     return node;
 }
 
-// Insert word
 void insert(Trie* root, char* word) {
     Trie* temp = root;
     for (int i = 0; word[i]; i++) {
@@ -46,7 +42,6 @@ void insert(Trie* root, char* word) {
     temp->end = 1;
 }
 
-// Search word
 int search(Trie* root, char* word) {
     Trie* temp = root;
     for (int i = 0; word[i]; i++) {
@@ -61,13 +56,11 @@ int search(Trie* root, char* word) {
     return temp->end;
 }
 
-// Min function
 int min(int a, int b, int c) {
     int m = (a < b) ? a : b;
     return (m < c) ? m : c;
 }
 
-// Edit Distance
 int editDistance(char *a, char *b) {
     int m = strlen(a), n = strlen(b);
     int dp[m+1][n+1];
@@ -87,7 +80,6 @@ int editDistance(char *a, char *b) {
     return dp[m][n];
 }
 
-// 🔥 Soundex (Phonetic Matching)
 void soundex(char *word, char *code) {
     char map[26] = {
         '0','1','2','3','0','1','2','0','0','2','2','4','5',
@@ -119,7 +111,6 @@ void collect(Trie* root, char* buffer, int level, char* input) {
         soundex(input, code1);
         soundex(buffer, code2);
 
-        // Condition: either edit distance OR phonetic match
         if ((dist <= 2 || strcmp(code1, code2) == 0) && sugCount < MAX_SUG) {
             strcpy(suggestions[sugCount].word, buffer);
             suggestions[sugCount].dist = dist;
@@ -135,7 +126,6 @@ void collect(Trie* root, char* buffer, int level, char* input) {
     }
 }
 
-// Sort suggestions
 void sortSuggestions() {
     for (int i = 0; i < sugCount - 1; i++) {
         for (int j = i + 1; j < sugCount; j++) {
@@ -148,7 +138,6 @@ void sortSuggestions() {
     }
 }
 
-// Load dictionary
 void loadDictionary(Trie* root) {
     FILE *fp = fopen("dictionary.txt", "r");
     char word[MAX];
@@ -165,14 +154,12 @@ void loadDictionary(Trie* root) {
     fclose(fp);
 }
 
-// Save word
 void saveWord(char* word) {
     FILE *fp = fopen("dictionary.txt", "a");
     fprintf(fp, "%s\n", word);
     fclose(fp);
 }
 
-// Main
 int main() {
     Trie* root = createNode();
     loadDictionary(root);
